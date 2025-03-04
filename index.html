@@ -1,11 +1,58 @@
 <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Project 1</title>
-    </head>
-    <body>
-        <input type="file" id="photoInput" accept="image/*">
-        <button id="uploadButton">Upload image</button>
-        <script src="script.js"></script>
-    </body>
-    </html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload to S3</title>
+</head>
+<body>
+
+    <h2>Upload Image to S3</h2>
+    
+    <input type="file" id="fileInput">
+    <button onclick="uploadFile()">Upload</button>
+
+    <script>
+        // Set title from localStorage on page load
+        document.addEventListener("DOMContentLoaded", function() {
+            const savedTitle = localStorage.getItem("uploadedFileName");
+            if (savedTitle) {
+                document.title = savedTitle;
+            }
+        });
+
+        function uploadFile() {
+            var fileInput = document.getElementById("fileInput");
+            var file = fileInput.files[0];
+
+            if (!file) {
+                alert("Please select a file first.");
+                return;
+            }
+
+            var bucketName = "imageupload259";  // Change this to your S3 bucket name
+            var fileName = file.name;
+            var uploadUrl = `https://${bucketName}.s3.amazonaws.com/${fileName}`;
+
+            fetch(uploadUrl, {
+                method: "PUT",
+                body: file,
+                headers: {
+                    "Content-Type": file.type
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    document.title = fileName; // Change title
+                    localStorage.setItem("uploadedFileName", fileName); // Store it
+                    alert("File uploaded successfully!");
+                } else {
+                    alert("Upload failed. Check console for details.");
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+
+</body>
+</html>
