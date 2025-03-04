@@ -1,9 +1,21 @@
 version: 0.2
 
 phases:
+  install:
+    commands:
+      - yum install -y jq
   build:
     commands:
-      - aws s3 cp index.html s3://imageuploadweb11/
+      - echo "Fetching the last uploaded image name..."
+      - IMAGE_NAME=$(aws s3api list-objects --bucket imageupload259 --query "Contents[-1].Key" --output text)
+      - echo "Last uploaded image: $IMAGE_NAME"
+      
+      - echo "Updating index.html with new title..."
+      - sed -i "s|<title>.*</title>|<title>$IMAGE_NAME</title>|" index.html
+
+      - echo "Uploading updated index.html to S3..."
+      - aws s3 cp index.html s3://imageuploadweb11/ --acl public-read
+
 artifacts:
   files:
     - '**/*'
