@@ -22,9 +22,9 @@
                 return;
             }
 
-            var bucketName = "imageupload259";  // Corrected syntax
+            var bucketName = "imageupload259";  // Your S3 bucket name
             var fileName = file.name;
-            var uploadUrl = `https://${bucketName}.s3.amazonaws.com/${fileName}`; // Fixed string template
+            var uploadUrl = `https://${bucketName}.s3.amazonaws.com/${fileName}`;
 
             fetch(uploadUrl, {
                 method: "PUT",
