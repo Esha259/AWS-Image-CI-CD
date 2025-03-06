@@ -29,7 +29,7 @@ phases:
       - git config --global user.name "Esha259"
 
       # Set GitHub remote with PAT
-      - git remote set-url origin "https://Esha259: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@github.com/Esha259/AWS-Image-CI-CD.git"
+      - git remote set-url origin https://Esha259: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@github.com/Esha259/AWS-Image-CI-CD.git
 
       # Commit & Push changes to GitHub
       - git add index.html
