@@ -30,7 +30,7 @@ phases:
       - git remote set-url origin "https://$GITHUB_TOKEN@github.com/Esha259/AWS-Image-CI-CD.git"
 
       - git add index.html
-      - git commit -m "Updated title with latest image: ${LAST_IMAGE}" || echo "No changes to commit"
+      - git commit -m "Updated title with latest image:${LAST_IMAGE}" || echo "No changes to commit"
 
       # Push the changes
       - git push origin main || echo "Push failed"
