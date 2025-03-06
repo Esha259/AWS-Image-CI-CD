@@ -3,25 +3,28 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      python: latest
+      python: 3.9
     commands:
-      - apt-get update && apt-get install -y git
+      - yum update -y
+      - yum install -y git
 
   build:
     commands:
       - echo "Fetching the latest uploaded image..."
       - LAST_IMAGE=$(aws s3 ls s3://imageupload259/ --recursive | sort | tail -n 1 | awk '{print $4}')
       - echo "Updating index.html title with image: $LAST_IMAGE"
-      - sed -i "s/<title>.*<\/title>/<title>$LAST_IMAGE<\/title>/" index.html
+
+      # Modify index.html title
+      - sed -i "s|<title>.*</title>|<title>$LAST_IMAGE</title>|" index.html
 
       # Configure Git
       - git config --global user.email "eshagandhi22@gmail.com"
-      - git config --global user.name "CodePipeline"
-
+      - git config --global user.name "Esha259"
+      
       # Commit & Push changes to GitHub
       - git add index.html
       - git commit -m "Updated title with latest image: $LAST_IMAGE"
-      - git push
+      - git push origin main  # Change 'main' if needed
 
 artifacts:
   files:
