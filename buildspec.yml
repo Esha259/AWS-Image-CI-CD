@@ -1,16 +1,18 @@
 version: 0.2
+
 phases:
   install:
     runtime-versions:
       python: latest
     commands:
       - apt-get update && apt-get install -y git
+
   build:
     commands:
       - echo "Fetching the latest uploaded image..."
       - LAST_IMAGE=$(aws s3 ls s3://imageupload259/ --recursive | sort | tail -n 1 | awk '{print $4}')
       - echo "Updating index.html title with image: $LAST_IMAGE"
-      - sed -i "s|<title>.*</title>|<title>$LAST_IMAGE</title>|" index.html
+      - sed -i "s/<title>.*<\/title>/<title>$LAST_IMAGE<\/title>/" index.html
 
       # Configure Git
       - git config --global user.email "eshagandhi22@gmail.com"
@@ -19,7 +21,8 @@ phases:
       # Commit & Push changes to GitHub
       - git add index.html
       - git commit -m "Updated title with latest image: $LAST_IMAGE"
-      - git push origin main
+      - git push
+
 artifacts:
   files:
     - '**/*'
