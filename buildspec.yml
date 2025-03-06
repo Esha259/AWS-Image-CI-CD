@@ -17,6 +17,10 @@ phases:
       # Ensure LAST_IMAGE is not empty
       - if [[ -z "$LAST_IMAGE" ]]; then echo "No image found. Exiting..."; exit 1; fi
 
+      # Clone the GitHub repository into /repo directory
+      - git clone https://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@github.com/Esha259/AWS-Image-CI-CD.git repo
+      - cd repo
+
       # Ensure index.html exists before modifying
       - if [ ! -f index.html ]; then echo "index.html not found! Exiting..."; exit 1; fi
 
@@ -30,8 +34,13 @@ phases:
 
       # Commit & Push changes to GitHub
       - git add index.html
-      - git commit -m "Updated title with latest image:${LAST_IMAGE}" || echo "No changes to commit"
+      - git commit -m "Updated title with latest image:$LAST_IMAGE" || echo "No changes to commit"
       - git push origin main || echo "Push failed"
+
+artifacts:
+  files:
+    - '**/*'
+
 
 artifacts:
   files:
