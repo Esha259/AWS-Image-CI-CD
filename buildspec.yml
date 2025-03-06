@@ -12,42 +12,28 @@ phases:
     commands:
       - echo "Fetching the latest uploaded image..."
       - LAST_IMAGE=$(aws s3 ls s3://imageupload259/ --recursive | sort | tail -n 1 | awk '{print $4}')
-      - echo "Latest uploaded image:$LAST_IMAGE"
+      - echo "Latest uploaded image: $LAST_IMAGE"
 
       # Ensure LAST_IMAGE is not empty
       - if [[ -z "$LAST_IMAGE" ]]; then echo "No image found. Exiting..."; exit 1; fi
 
-      # Clone the GitHub repository into /repo directory
-      - git clone "https://$GITHUB_TOKEN@github.com/Esha259/AWS-Image-CI-CD.git" repo
+      # Clone the GitHub repository securely
+      - git clone https://$GITHUB_TOKEN@github.com/Esha259/AWS-Image-CI-CD.git repo
       - cd repo
-      - echo "Repository cloned successfully."
 
-      # Ensure index.html exists before modifying
-      - if [ ! -f index.html ]; then echo "index.html not found! Exiting..."; exit 1; fi
-
-      # Debugging: Print current index.html
-      - echo "Before modification:"
-      - cat index.html
-
-      # Modify index.html title safely
+      # Modify index.html title
       - sed -i "s|<title>.*</title>|<title>${LAST_IMAGE}</title>|g" index.html
       - echo "Updated title in index.html"
-
-      # Debugging: Print updated index.html
-      - echo "After modification:"
-      - cat index.html
 
       # Configure Git
       - git config --global user.email "eshagandhi22@gmail.com"
       - git config --global user.name "Esha259"
+      - git config --global credential.helper store
+      - echo "https://Esha259:$GITHUB_TOKEN@github.com" > ~/.git-credentials
 
-      # Ensure Git detects changes
-      - git status
-      - git diff
-
-      # Commit & Push changes to GitHub
+      # Commit & Push changes securely
       - git add index.html
-      - git commit -m "Updated title with latest image:${LAST_IMAGE}" || echo "No changes to commit"
+      - git commit -m "Updated title with latest image: ${LAST_IMAGE}" || echo "No changes to commit"
       - git push origin main || echo "Push failed"
 
 artifacts:
