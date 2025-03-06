@@ -12,23 +12,31 @@ phases:
     commands:
       - echo "Fetching the latest uploaded image..."
       - LAST_IMAGE=$(aws s3 ls s3://imageupload259/ --recursive | sort | tail -n 1 | awk '{print $4}')
-      - echo "Latest uploaded image: $LAST_IMAGE"
+      - echo "Latest uploaded image:$LAST_IMAGE"
 
       # Ensure LAST_IMAGE is not empty
-      - if [ -z "$LAST_IMAGE" ]; then echo "No image found. Exiting..."; exit 1; fi
+      - if [[ -z "$LAST_IMAGE" ]]; then echo "No image found. Exiting..."; exit 1; fi
 
-      # Modify index.html title
-      - sed -i "s|<title>.*</title>|<title>${LAST_IMAGE}</title>|g" index.html
+      # Ensure index.html exists before modifying
+      - if [ ! -f index.html ]; then echo "index.html not found! Exiting..."; exit 1; fi
+
+      # Modify index.html title safely
+      - sed -i 's|<title>.*</title>|<title>'"$LAST_IMAGE"'</title>|g' index.html
+      - echo "Updated title in index.html"
 
       # Configure Git
       - git config --global user.email "eshagandhi22@gmail.com"
       - git config --global user.name "Esha259"
-      
-      # Add, Commit & Push changes to GitHub
+
+      # Set GitHub remote with PAT
+      - git remote set-url origin "https://Esha259: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@github.com/Esha259/<YOUR_REPO_NAME>.git"
+
+      # Commit & Push changes to GitHub
       - git add index.html
-      - git diff --cached --quiet || git commit -m "Updated title with latest image: ${LAST_IMAGE}"
-      - git push origin main || echo "Push failed. Check permissions."
+      - git commit -m "Updated title with latest image:${LAST_IMAGE}" || echo "No changes to commit"
+      - git push origin main || echo "Push failed"
 
 artifacts:
   files:
     - '**/*'
+
