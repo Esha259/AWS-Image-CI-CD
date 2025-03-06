@@ -18,7 +18,7 @@ phases:
       - if [[ -z "$LAST_IMAGE" ]]; then echo "No image found. Exiting..."; exit 1; fi
 
       # Clone the GitHub repository into /repo directory
-      - git clone https://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@github.com/Esha259/AWS-Image-CI-CD.git repo
+      - git clone https://$GITHUB_TOKEN@github.com/Esha259/AWS-Image-CI-CD.git repo
       - cd repo
       - echo "Repository cloned successfully."
 
