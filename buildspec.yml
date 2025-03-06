@@ -47,7 +47,7 @@ phases:
 
       # Commit & Push changes to GitHub
       - git add index.html
-      - git commit -m "Updated title with latest image: ${LAST_IMAGE}" || echo "No changes to commit"
+      - git commit -m "Updated title with latest image:${LAST_IMAGE}" || echo "No changes to commit"
       - git push origin main || echo "Push failed"
 
 artifacts:
