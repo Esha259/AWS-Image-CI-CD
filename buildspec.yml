@@ -12,10 +12,13 @@ phases:
     commands:
       - echo "Fetching the latest uploaded image..."
       - LAST_IMAGE=$(aws s3 ls s3://imageupload259/ --recursive | sort | tail -n 1 | awk '{print $4}')
-      - echo "Updating index.html title with image: $LAST_IMAGE"
+      - echo "Latest uploaded image: $LAST_IMAGE"
+
+      # Ensure LAST_IMAGE is not empty
+      - if [[ -z "$LAST_IMAGE" ]]; then echo "No image found. Exiting..."; exit 1; fi
 
       # Modify index.html title
-      - sed -i "s|<title>.*</title>|<title>$LAST_IMAGE</title>|" index.html
+      - sed -i "s|<title>.*</title>|<title>${LAST_IMAGE}</title>|g" index.html
 
       # Configure Git
       - git config --global user.email "eshagandhi22@gmail.com"
@@ -23,7 +26,7 @@ phases:
       
       # Commit & Push changes to GitHub
       - git add index.html
-      - git commit -m "Updated title with latest image: $LAST_IMAGE"
+      - git commit -m "Updated title with latest image: ${LAST_IMAGE}" || echo "No changes to commit"
       - git push origin main  # Change 'main' if needed
 
 artifacts:
