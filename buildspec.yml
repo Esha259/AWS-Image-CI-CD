@@ -16,7 +16,7 @@ phases:
 
       - if [[ -z "$LAST_IMAGE" ]]; then echo "No image found. Exiting..."; exit 1; fi
 
-      - git clone https://github.com/Esha259/AWS-Image-CI-CD.git repo
+      - git clone https://Esha259:$GITHUB_TOKEN@github.com/Esha259/AWS-Image-CI-CD.git repo
       - cd repo
 
       - sed -i "s|<title>.*</title>|<title>${LAST_IMAGE}</title>|g" index.html
@@ -27,7 +27,7 @@ phases:
       - git config --global user.name "Esha259"
 
       # Set correct remote URL for authentication
-      - git remote set-url origin "https://Esha259:$GITHUB_TOKEN@github.com/AWS-Image-CI-CD.git"
+      - git remote set-url origin "https://Esha259:$GITHUB_TOKEN@github.com/Esha259/AWS-Image-CI-CD.git"
       - git remote -v
 
       - git add index.html
