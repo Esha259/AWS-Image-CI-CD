@@ -28,6 +28,7 @@ phases:
 
       # Set correct remote URL for authentication
       - git remote set-url origin "https://Esha259:$GITHUB_TOKEN@github.com//AWS-Image-CI-CD.git"
+      - git remote -v
 
       - git add index.html
       - git commit -m "Updated title with latest image:${LAST_IMAGE}" || echo "No changes to commit"
