@@ -1,1 +1,19 @@
+version: 0.2
 
+phases:
+  install:
+    runtime-versions:
+      python: 3.9
+    commands:
+      - echo "Installing necessary packages..."
+      - yum update -y
+      - yum install -y git
+
+  build:
+    commands:
+      - echo "Build triggered by changes to index.html"
+      - echo "No further build steps required."
+
+artifacts:
+  files:
+    - '**/*'
