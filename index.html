@@ -3,16 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>kitten.png</title>
+    <title>Image Upload</title>
 </head>
 <body>
 
     <h2>Upload Image to S3</h2>
-    
     <input type="file" id="fileInput">
     <button onclick="uploadFile()">Upload</button>
 
+    <h3>Uploaded Images:</h3>
+    <div id="imageGallery"></div>
+
     <script>
+        var bucketName = 'imageupload259';
+
+        function listImages() {
+            fetch(`https://${bucketName}.s3.amazonaws.com?list-type=2`)
+                .then(response => response.text())
+                .then(data => {
+                    var parser = new DOMParser();
+                    var xml = parser.parseFromString(data, 'application/xml');
+                    var contents = xml.getElementsByTagName('Contents');
+                    var gallery = document.getElementById('imageGallery');
+                    gallery.innerHTML = '';
+                    for (let item of contents) {
+                        var key = item.getElementsByTagName('Key')[0].textContent;
+                        var imageUrl = `https://${bucketName}.s3.amazonaws.com/${key}`;
+                        var img = document.createElement('img');
+                        img.src = imageUrl;
+                        img.alt = key;
+                        img.style = 'max-width: 200px; margin: 5px;';
+                        gallery.appendChild(img);
+                    }
+                })
+                .catch(error => console.error('Error fetching images:', error));
+        }
+
         function uploadFile() {
             var fileInput = document.getElementById("fileInput");
             var file = fileInput.files[0];
@@ -22,10 +48,7 @@
                 return;
             }
 
-            var bucketName = "imageupload259";  // Your S3 bucket name
-            var fileName = file.name;
-            var uploadUrl = `https://${bucketName}.s3.amazonaws.com/${fileName}`;
-
+            var uploadUrl = `https://${bucketName}.s3.amazonaws.com/${file.name}`;
             fetch(uploadUrl, {
                 method: "PUT",
                 body: file,
@@ -36,13 +59,17 @@
             .then(response => {
                 if (response.ok) {
                     alert("File uploaded successfully!");
+                    listImages();
                 } else {
-                    alert("Upload failed. Check console for details.");
+                    alert("Upload failed.");
                 }
             })
-            .catch(error => console.error("Error:", error));
+            .catch(error => console.error("Error uploading file:", error));
         }
+
+        listImages(); // Load images on page load
     </script>
 
 </body>
 </html>
+
